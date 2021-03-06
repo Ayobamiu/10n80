@@ -4,6 +4,7 @@
   "description": "An ecommerce Backend API with NodeJS",
   "main": "index.js",
   "scripts": {
+    "start": "node src/index.js",
     "dev": "env-cmd src/config/dev.env nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
