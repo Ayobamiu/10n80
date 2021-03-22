@@ -15,7 +15,7 @@ router.post("/carts/:productId", async (req, res) => {
   });
 
   try {
-    // await cart.save();
+    await cart.save();
     // await cart.populate("product").execPopulate();
     // await cart.populate("owner").execPopulate();
     res.send(cart);

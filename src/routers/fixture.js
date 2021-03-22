@@ -9,35 +9,72 @@ const Fixture = require("../models/fixture");
 
 //create fixture
 var cpUpload = upload.fields([
-  { name: "image", maxCount: 1 },
+  { name: "images" },
   { name: "participantsImages" },
+  { name: "document1", maxCount: 1 },
+  { name: "document2", maxCount: 1 },
+  { name: "document3", maxCount: 1 },
+  { name: "document4", maxCount: 1 },
 ]);
 
 router.post("/fixtures", cpUpload, async (req, res) => {
-  const image = req.files["image"][0].location;
+  const fixtureImages = req.files["images"];
+  const document1 = req.files["document1"][0].path;
+  const document2 = req.files["document2"][0].path;
+  const document3 = req.files["document3"][0].path;
+  const document4 = req.files["document4"][0].path;
   const participantsImages = req.files["participantsImages"];
-  if (participantsImages.length !== req.body.participantsName.length) {
-    return res.status(400).send({
-      error: "400 Bad request",
-      message: "participantsImages and name should be same lenght",
-    });
-  }
   const participants = [];
   for (let index = 0; index < participantsImages.length; index++) {
-    const image = participantsImages[index].location;
-    const name = req.body.participantsName[index];
-    participants.push({ image, name });
+    // const image = participantsImages[index].location;
+    const image = participantsImages[index].path;
+    participants.push({ image });
   }
+  const images = [];
+  for (let index = 0; index < fixtureImages.length; index++) {
+    // const image = fixtureImages[index].location;
+    const image = fixtureImages[index].path;
+    images.push(image);
+  }
+  links = [
+    { title: req.body.document1title, doc: document1 },
+    { title: req.body.document2title, doc: document2 },
+    { title: req.body.document3title, doc: document3 },
+    { title: req.body.document4title, doc: document4 },
+  ];
+  const admins = [
+    req.body.admin1,
+    req.body.admin2,
+    req.body.admin3,
+    req.body.admin4,
+  ];
+  const rules = [
+    req.body.rule1,
+    req.body.rule2,
+    req.body.rule3,
+    req.body.rule4,
+    req.body.rule5,
+    req.body.rule6,
+    req.body.rule7,
+    req.body.rule8,
+    req.body.rule9,
+    req.body.rule10,
+  ];
   const fixture = new Fixture({
     title: req.body.title,
-    image,
+    images,
     time: req.body.time,
     participants,
-    rules: req.body.rules,
+    rules,
+    admins,
+    gameStart: req.body.gameStart,
+    gameEnd: req.body.gameEnd,
+    finalGame: req.body.finalGame,
+    links,
   });
   try {
     await fixture.save();
-    // await fixture.populate("owner").execPopulate();
+    await fixture.populate("owner").execPopulate();
     res.status(201).send(fixture);
   } catch (error) {
     res.status(400).send();
@@ -47,7 +84,7 @@ router.post("/fixtures", cpUpload, async (req, res) => {
 //get fixtures e.g. /fixtures?limit=1&skip=1&sortBy=createdAt:desc
 router.get("/fixtures", async (req, res) => {
   try {
-    const fixtures = await Fixture.find({});
+    const fixtures = await Fixture.find({}).sort({ createdAt: -1 });
     res.send(fixtures);
   } catch (error) {
     res.status(500).send();

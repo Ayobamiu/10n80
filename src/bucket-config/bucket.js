@@ -10,41 +10,41 @@ aws.config.update({
   region: "us-east-2",
 });
 
-const storage = multerS3({
-  acl: "public-read",
-  s3,
-  bucket: "apply-to-usman",
-  metadata: function (req, file, cb) {
-    cb(null, { fieldName: file.fieldname });
-  },
-  key: function (req, file, cb) {
-    cb(null, Date.now() + file.originalname);
-  },
-});
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, "images");
+// const storage = multerS3({
+//   acl: "public-read",
+//   s3,
+//   bucket: "apply-to-usman",
+//   metadata: function (req, file, cb) {
+//     cb(null, { fieldName: file.fieldname });
 //   },
-//   filename: function (req, file, cb) {
+//   key: function (req, file, cb) {
 //     cb(null, Date.now() + file.originalname);
 //   },
 // });
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "images");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + file.originalname);
+  },
+});
 
 const upload = multer({
   storage: storage,
   limits: {
     fileSize: 10000000, //1mb
   },
-  fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-      return cb(new Error("Kindly upload an image"));
-    }
-    cb(undefined, true);
+  // fileFilter(req, file, cb) {
+  // if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+  //   return cb(new Error("Kindly upload an image"));
+  // }
+  // cb(undefined, true);
 
-    // cb(new Error("File Upload failed!!"));
-    // cb(undefined, true); //no error & upload should be accepted
-    // cb(undefined, false); //no error & upload should be silently rejected
-  },
+  // cb(new Error("File Upload failed!!"));
+  // cb(undefined, true); //no error & upload should be accepted
+  // cb(undefined, false); //no error & upload should be silently rejected
+  // },
 });
 
 module.exports = upload;

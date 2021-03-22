@@ -23,7 +23,7 @@ router.post("/highlights", async (req, res) => {
 //get highlights e.g. /highlights?limit=1&skip=1&sortBy=createdAt:desc
 router.get("/highlights", async (req, res) => {
   try {
-    const highlights = await Highlight.find({});
+    const highlights = await Highlight.find({}).sort({ createdAt: -1 });
     res.send(highlights);
   } catch (error) {
     res.status(500).send();
