@@ -19,21 +19,25 @@ var cpUpload = upload.fields([
 
 router.post("/fixtures", cpUpload, async (req, res) => {
   const fixtureImages = req.files["images"];
-  const document1 = req.files["document1"] && req.files["document1"][0].path;
-  const document2 = req.files["document2"] && req.files["document2"][0].path;
-  const document3 = req.files["document3"] && req.files["document3"][0].path;
-  const document4 = req.files["document4"] && req.files["document4"][0].path;
+  const document1 =
+    req.files["document1"] && req.files["document1"][0].location;
+  const document2 =
+    req.files["document2"] && req.files["document2"][0].location;
+  const document3 =
+    req.files["document3"] && req.files["document3"][0].location;
+  const document4 =
+    req.files["document4"] && req.files["document4"][0].location;
   const participantsImages = req.files["participantsImages"];
   const participants = [];
   for (let index = 0; index < participantsImages.length; index++) {
     // const image = participantsImages[index].location;
-    const image = participantsImages[index].path;
+    const image = participantsImages[index].location;
     participants.push({ image });
   }
   const images = [];
   for (let index = 0; index < fixtureImages.length; index++) {
     // const image = fixtureImages[index].location;
-    const image = fixtureImages[index].path;
+    const image = fixtureImages[index].location;
     images.push(image);
   }
   links = [
@@ -62,13 +66,15 @@ router.post("/fixtures", cpUpload, async (req, res) => {
   ];
   const fixture = new Fixture({
     title: req.body.title,
+    overview: req.body.overview,
+    description: req.body.description, 
     images,
     time: req.body.time,
     participants,
     rules,
     admins,
-    gameStart: req.body.gameStart,
-    gameEnd: req.body.gameEnd,
+    gameStart: req.body.startDate,
+    gameEnd: req.body.roundGameEnd,
     finalGame: req.body.finalGame,
     links,
   });

@@ -5,6 +5,12 @@ const fixtureSchema = mongoose.Schema(
     title: {
       type: String,
     },
+    overview: {
+      type: String,
+    },
+    description: {
+      type: String,
+    },
     images: {
       type: Array,
     },

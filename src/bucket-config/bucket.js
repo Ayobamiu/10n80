@@ -10,25 +10,25 @@ aws.config.update({
   region: "us-east-2",
 });
 
-// const storage = multerS3({
-//   acl: "public-read",
-//   s3,
-//   bucket: "apply-to-usman",
-//   metadata: function (req, file, cb) {
-//     cb(null, { fieldName: file.fieldname });
-//   },
-//   key: function (req, file, cb) {
-//     cb(null, Date.now() + file.originalname);
-//   },
-// });
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "images");
+const storage = multerS3({
+  acl: "public-read",
+  s3,
+  bucket: "apply-to-usman",
+  metadata: function (req, file, cb) {
+    cb(null, { fieldName: file.fieldname });
   },
-  filename: function (req, file, cb) {
+  key: function (req, file, cb) {
     cb(null, Date.now() + file.originalname);
   },
 });
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "images");
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, Date.now() + file.originalname);
+//   },
+// });
 
 const upload = multer({
   storage: storage,
