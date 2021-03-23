@@ -79,9 +79,7 @@ router.patch(
 //delete highlight
 router.delete("/highlights/:id", async (req, res) => {
   try {
-    const highlight = await Highlight.findOneAndDelete({
-      _id: req.params.id,
-    });
+    const highlight = await Highlight.findByIdAndDelete(req.params.id);
     if (!highlight) {
       res.status(404).send();
     }

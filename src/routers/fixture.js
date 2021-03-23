@@ -19,10 +19,10 @@ var cpUpload = upload.fields([
 
 router.post("/fixtures", cpUpload, async (req, res) => {
   const fixtureImages = req.files["images"];
-  const document1 = req.files["document1"][0].path;
-  const document2 = req.files["document2"][0].path;
-  const document3 = req.files["document3"][0].path;
-  const document4 = req.files["document4"][0].path;
+  const document1 = req.files["document1"] && req.files["document1"][0].path;
+  const document2 = req.files["document2"] && req.files["document2"][0].path;
+  const document3 = req.files["document3"] && req.files["document3"][0].path;
+  const document4 = req.files["document4"] && req.files["document4"][0].path;
   const participantsImages = req.files["participantsImages"];
   const participants = [];
   for (let index = 0; index < participantsImages.length; index++) {
