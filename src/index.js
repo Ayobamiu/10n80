@@ -9,6 +9,7 @@ const fixtureRouter = require("./routers/fixture");
 const paymentRouter = require("./routers/payment");
 const liveNowRouter = require("./routers/liveNow");
 const resultRouter = require("./routers/result");
+const slideRouter = require("./routers/slide");
 require("./db/mongoose");
 
 const app = express();
@@ -16,6 +17,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use(slideRouter);
 app.use(resultRouter);
 app.use(liveNowRouter);
 app.use(paymentRouter);
