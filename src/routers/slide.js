@@ -27,7 +27,7 @@ router.get("/slides", async (req, res) => {
   try {
     const slides = await Slide.find({})
       .sort({ createdAt: -1 })
-      .populate({ path: "tournament", select: "title" });
+      .populate({ path: "tournament", select: "title slug" });
     res.send(slides);
   } catch (error) {
     res.status(500).send();

@@ -6,6 +6,7 @@ const auth = require("../middlewares/auth");
 const upload = require("../bucket-config/bucket");
 const fixture = require("../models/fixture");
 const Fixture = require("../models/fixture");
+const slugify = require("slugify");
 
 //create fixture
 var cpUpload = upload.fields([
@@ -67,6 +68,7 @@ router.post("/fixtures", cpUpload, async (req, res) => {
   const fixture = new Fixture({
     title: req.body.title,
     overview: req.body.overview,
+    slug: slugify(req.body.title),
     description: req.body.description,
     link: req.body.link,
     images,
@@ -99,10 +101,10 @@ router.get("/fixtures", async (req, res) => {
 });
 
 //get fixture by id
-router.get("/fixtures/:fixtureId", async (req, res) => {
+router.get("/fixtures/:slug", async (req, res) => {
   try {
     const fixture = await Fixture.findOne({
-      _id: req.params.fixtureId,
+      slug: req.params.slug,
     });
     res.send(fixture);
   } catch (error) {
@@ -153,6 +155,109 @@ router.patch(
       const existingImages = fixture.images;
       existingImages.push(image);
       fixture.images = existingImages;
+      await fixture.save();
+      res.send(fixture);
+    } catch (error) {
+      res.status(400).send("Error uploading!!");
+    }
+  },
+  (error, req, res, next) => {
+    res.status(400).send({ error: error.message });
+  }
+);
+
+var singleDoc = upload.single("doc");
+router.patch(
+  "/fixtures/:id/add-doc-link",
+  singleDoc,
+  async (req, res) => {
+    const link = { doc: req.file.location, title: req.body.title };
+    try {
+      const fixture = await Fixture.findOne({
+        _id: req.params.id,
+      });
+      if (!fixture) {
+        res.status(404).send();
+      }
+      const existingLinks = fixture.links;
+      existingLinks.push(link);
+      fixture.links = existingLinks;
+      await fixture.save();
+      res.send(fixture);
+    } catch (error) {
+      res.status(400).send("Error uploading!!");
+    }
+  },
+  (error, req, res, next) => {
+    res.status(400).send({ error: error.message });
+  }
+);
+
+var participantImage = upload.single("image");
+router.patch(
+  "/fixtures/:id/add-participant",
+  participantImage,
+  async (req, res) => {
+    const participant = { image: req.file.location };
+    try {
+      const fixture = await Fixture.findOne({
+        _id: req.params.id,
+      });
+      if (!fixture) {
+        res.status(404).send();
+      }
+      const existingparticipants = fixture.participants;
+      existingparticipants.push(participant);
+      fixture.participants = existingparticipants;
+      await fixture.save();
+      res.send(fixture);
+    } catch (error) {
+      res.status(400).send("Error uploading!!");
+    }
+  },
+  (error, req, res, next) => {
+    res.status(400).send({ error: error.message });
+  }
+);
+
+router.delete(
+  "/fixtures/:id/:docId",
+  async (req, res) => {
+    try {
+      const fixture = await Fixture.findOne({
+        _id: req.params.id,
+      });
+      if (!fixture) {
+        res.status(404).send();
+      }
+      const existingLinks = fixture.links;
+      existingLinks.pop((link) => link._id === req.params.docId);
+      // fixture.links = newLinks;
+      await fixture.save();
+      res.send(fixture);
+    } catch (error) {
+      res.status(400).send("Error uploading!!");
+    }
+  },
+  (error, req, res, next) => {
+    res.status(400).send({ error: error.message });
+  }
+);
+
+router.delete(
+  "/fixtures/:id/:participantId/delete-participant",
+  async (req, res) => {
+    try {
+      const fixture = await Fixture.findOne({
+        _id: req.params.id,
+      });
+      if (!fixture) {
+        res.status(404).send();
+      }
+      const existingparticipants = fixture.participants;
+      existingparticipants.pop(
+        (participant) => participant._id === req.params.participantId
+      );
       await fixture.save();
       res.send(fixture);
     } catch (error) {

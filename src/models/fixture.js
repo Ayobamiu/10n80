@@ -5,6 +5,9 @@ const fixtureSchema = mongoose.Schema(
     title: {
       type: String,
     },
+    slug: {
+      type: String,
+    },
     link: {
       type: String,
     },
@@ -23,7 +26,7 @@ const fixtureSchema = mongoose.Schema(
     participants: [
       {
         image: {
-          type: String,
+          type: String, 
         },
       },
     ],
