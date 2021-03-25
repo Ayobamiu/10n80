@@ -7,7 +7,7 @@ const slideSchema = mongoose.Schema(
     },
     tournament: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Fixture",
+      ref: "Fixture", 
     },
   },
   { timestamps: true }

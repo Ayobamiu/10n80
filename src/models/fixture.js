@@ -5,6 +5,9 @@ const fixtureSchema = mongoose.Schema(
     title: {
       type: String,
     },
+    link: {
+      type: String,
+    },
     overview: {
       type: String,
     },

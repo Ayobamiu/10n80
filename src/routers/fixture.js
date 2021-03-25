@@ -67,7 +67,8 @@ router.post("/fixtures", cpUpload, async (req, res) => {
   const fixture = new Fixture({
     title: req.body.title,
     overview: req.body.overview,
-    description: req.body.description, 
+    description: req.body.description,
+    link: req.body.link,
     images,
     time: req.body.time,
     participants,
@@ -114,20 +115,6 @@ router.patch(
   "/fixtures/:id",
   async (req, res) => {
     const updates = Object.keys(req.body);
-    const allowedUpdates = [
-      "title",
-      "teamAName",
-      "teamAImage",
-      "teamBName",
-      "teamBImage",
-      "time",
-    ];
-    const isValidOperation = updates.every((update) =>
-      allowedUpdates.includes(update)
-    );
-    if (!isValidOperation) {
-      return res.status(400).send({ error: "Invalid Updates!" });
-    }
     try {
       const fixture = await Fixture.findOne({
         _id: req.params.id,
@@ -139,6 +126,58 @@ router.patch(
         fixture[update] = req.body[update];
       });
 
+      await fixture.save();
+      res.send(fixture);
+    } catch (error) {
+      res.status(400).send("Error uploading!!");
+    }
+  },
+  (error, req, res, next) => {
+    res.status(400).send({ error: error.message });
+  }
+);
+
+var singleImage = upload.single("image");
+router.patch(
+  "/fixtures/:id/add-photo",
+  singleImage,
+  async (req, res) => {
+    const image = req.file.location;
+    try {
+      const fixture = await Fixture.findOne({
+        _id: req.params.id,
+      });
+      if (!fixture) {
+        res.status(404).send();
+      }
+      const existingImages = fixture.images;
+      existingImages.push(image);
+      fixture.images = existingImages;
+      await fixture.save();
+      res.send(fixture);
+    } catch (error) {
+      res.status(400).send("Error uploading!!");
+    }
+  },
+  (error, req, res, next) => {
+    res.status(400).send({ error: error.message });
+  }
+);
+
+router.delete(
+  "/fixtures/:id/delete-photo",
+  async (req, res) => {
+    const image = req.body.image;
+    try {
+      const fixture = await Fixture.findOne({
+        _id: req.params.id,
+      });
+      if (!fixture) {
+        res.status(404).send();
+      }
+      const existingImages = fixture.images;
+      existingImages.pop(image);
+      fixture.images = existingImages;
       await fixture.save();
       res.send(fixture);
     } catch (error) {
