@@ -101,7 +101,19 @@ router.get("/fixtures", async (req, res) => {
 });
 
 //get fixture by id
-router.get("/fixtures/:slug", async (req, res) => {
+router.get("/fixtures/:id", async (req, res) => {
+  try {
+    const fixture = await Fixture.findOne({
+      _id: req.params.id,
+    });
+    res.send(fixture);
+  } catch (error) {
+    res.status(404).send();
+  }
+});
+
+//get fixture by slug
+router.get("/fixtures/:slug/by-slug", async (req, res) => {
   try {
     const fixture = await Fixture.findOne({
       slug: req.params.slug,
